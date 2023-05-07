@@ -24,7 +24,7 @@ printf("child process: %ld\n", (long) pid);
 
 ## 3. Setting up network connection between parent namespace and child namespace
 
-Currently sending pings from the parent process successfully transmits and receives packages, but the child cannot.
+Currently sending pings from the parent process successfully transmits and receives packages to child, but the child cannot send its own ping.
 
 ## 4. Put container filesystem in a file by using ​loop ​and try to create file in your new mount point.
 
