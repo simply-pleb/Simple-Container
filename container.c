@@ -53,11 +53,9 @@ int run_sh(void* arg)
 
 int child(void* arg)
 {
+  char c;
   sleep(1);
   sethostname("myhost", 6);
-  setip("veth1","10.0.0.15","255.0.0.0");
-
-  mount("proc", "/proc", "proc", 0, NULL);
 
   int ret = mount("/dev/loop30", "/home", "ext4", MS_NOATIME, "");    
   if (ret != 0) {
@@ -66,22 +64,18 @@ int child(void* arg)
   }
 
   chdir("/home");
-
+  setip("veth1","10.0.0.15","255.0.0.0");
 
   static char sh_stack[STACK_SIZE];
   pid_t sh_pid = clone(run_sh, sh_stack+STACK_SIZE, SIGCHLD, NULL);
   waitpid(sh_pid, NULL, 0);
-
-  if (umount("/proc") != 0){
-    perror("Failed to unmount /proc");
-    exit(EXIT_FAILURE);
-  }
 
   return 0;
 }
 
 int main()
 {
+  system("sudo mount --make-private -o remount /");
   char buf[255];
   pid_t pid = clone(child, stack+STACK_SIZE,
       CLONE_NEWNET | CLONE_NEWUTS | CLONE_NEWIPC | CLONE_NEWPID | CLONE_NEWNS | SIGCHLD, NULL);
